@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | EcoSecure</title>
+    <style>
+      /* CSS Reset and Variables */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #4a5568;
+        --primary-hover: #2d3748;
+        --bg: #f5f5f5;
+        --surface: #ffffff;
+        --border: #e0e0e0;
+        --text-main: #1a1a1a;
+        --text-body: #333333;
+        --text-muted: #666666;
+        --text-hint: #999999;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Added padding so the container doesn't touch screen edges on mobile */
+        padding: 16px;
+      }
+
+      .container {
+        background: var(--surface);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+      }
+
+      .header {
+        padding: 40px 40px 20px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 28px;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .form-container {
+        padding: 20px 40px 40px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-body);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 16px; /* 16px prevents iOS zoom on focus */
+        transition: all 0.3s ease;
+        outline: none;
+        color: var(--text-main);
+      }
+
+      input:focus {
+        border-color: var(--primary);
+        background: #fff;
+      }
+
+      .password-toggle {
+        position: relative;
+      }
+
+      .toggle-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-hint);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 8px 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-signup {
+        width: 100%;
+        padding: 16px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-signup:hover {
+        background: var(--primary-hover);
+      }
+
+      .signin-link {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-top: 24px;
+      }
+
+      .signin-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .terms {
+        font-size: 12px;
+        color: var(--text-hint);
+        text-align: center;
+        margin-top: 24px;
+        line-height: 1.6;
+      }
+
+      /* --- RESPONSIVE ADJUSTMENTS --- */
+
+      /* Tablets and Phones (less than 480px wide) */
+      @media (max-width: 480px) {
+        body {
+          padding: 12px;
+          align-items: flex-center; /* Mobile: push form to bottom slightly for thumb reach */
+          background: #fff; /* Optional: solid color for mobile */
+        }
+
+        .container {
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+          max-width: 100%;
+        }
+
+        .header {
+          padding: 30px 20px 10px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .form-container {
+          padding: 20px 20px 30px;
+        }
+
+        input {
+          padding: 16px; /* Larger touch target for mobile */
+        }
+
+        .btn-signup {
+          padding: 18px; /* Easier to tap with thumb */
+        }
+      }
+
+      /* Very Small Screens (iPhone SE / Fold) */
+      @media (max-width: 320px) {
+        h1 {
+          font-size: 20px;
+        }
+        .subtitle {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Login</h1>
+        <p class="subtitle">
+          Welcome back! Please sign in to access your dashboard
+        </p>
+      </div>
+      <div class="form-container">
+        <form id="loginForm">
+          <div class="input-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="name@company.com"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+            <div class="password-toggle">
+              <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                required
+              />
+              <button
+                type="button"
+                class="toggle-btn"
+                onclick="togglePassword()"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-signup">Sign In</button>
+        </form>
+
+        <div class="signin-link">
+          Don't have an account? <a href="#">Sign Up</a>
+        </div>
+
+        <div class="terms">
+          By signing in, you agree to our <br />
+          <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const toggleBtn = document.querySelector(".toggle-btn");
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          toggleBtn.textContent = "Hide";
+        } else {
+          passwordInput.type = "password";
+          toggleBtn.textContent = "Show";
+        }
+      }
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          alert(`Authorizing session for: ${email}`);
+          // In a real app, redirect here: window.location.href = 'dashboard.html';
+        });
+    </script>
+  </body>
+</html>
