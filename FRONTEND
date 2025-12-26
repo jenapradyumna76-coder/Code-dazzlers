@@ -1,1 +1,649 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoSecure | Fully Responsive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      .nav-btn.active {
+        background-color: #4a5568;
+        color: #ffffff;
+      }
+
+      /* Hide scrollbar for the horizontal nav on mobile */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 text-gray-800 font-sans antialiased">
+    <div class="min-h-screen flex flex-col lg:flex-row">
+      <aside
+        class="w-full lg:w-72 bg-white border-b lg:border-r border-gray-200 lg:h-screen lg:sticky lg:top-0 flex flex-col z-40"
+      >
+        <div
+          class="p-5 lg:p-8 border-b border-gray-200 flex items-center justify-between lg:block"
+        >
+          <div>
+            <h1
+              class="text-xl lg:text-2xl font-black text-gray-900 flex items-center gap-2"
+            >
+              <i class="fas fa-leaf text-slate-600"></i> EcoSecure
+            </h1>
+            <p class="text-gray-500 text-xs mt-0.5">Asset Management</p>
+          </div>
+          <div
+            class="lg:hidden w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-gray-200"
+          >
+            <i class="fas fa-user text-slate-500"></i>
+          </div>
+        </div>
+
+        <nav
+          class="p-3 lg:p-6 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible no-scrollbar"
+        >
+          <button
+            onclick="switchTab('cloud')"
+            class="nav-btn active whitespace-nowrap lg:whitespace-normal flex-shrink-0 w-auto lg:w-full flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4 rounded-lg font-semibold transition-all text-sm lg:text-base"
+          >
+            <i class="fas fa-shield-halved w-5"></i> Cloud
+          </button>
+          <button
+            onclick="switchTab('hardware')"
+            class="nav-btn whitespace-nowrap lg:whitespace-normal flex-shrink-0 w-auto lg:w-full flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4 rounded-lg font-semibold transition-all text-sm lg:text-base"
+          >
+            <i class="fas fa-microchip w-5"></i> Hardware
+          </button>
+          <button
+            onclick="switchTab('chatbot')"
+            class="nav-btn whitespace-nowrap lg:whitespace-normal flex-shrink-0 w-auto lg:w-full flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4 rounded-lg font-semibold transition-all text-sm lg:text-base"
+          >
+            <i class="fas fa-comment-dots w-5"></i> AI Support
+          </button>
+          <button
+            onclick="switchTab('reports')"
+            class="nav-btn whitespace-nowrap lg:whitespace-normal flex-shrink-0 w-auto lg:w-full flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4 rounded-lg font-semibold transition-all text-sm lg:text-base"
+          >
+            <i class="fas fa-file-contract w-5"></i> Reports
+          </button>
+        </nav>
+
+        <div
+          class="hidden lg:block p-8 border-t border-gray-200 bg-slate-50 mt-auto"
+        >
+          <div
+            class="text-xs font-bold text-gray-500 uppercase mb-3 tracking-widest"
+          >
+            System Health
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+            <span class="text-xs font-medium text-gray-800"
+              >API: Connected</span
+            >
+          </div>
+        </div>
+      </aside>
+
+      <main class="flex-1 flex flex-col min-w-0">
+        <header
+          class="hidden lg:flex p-8 bg-white border-b border-gray-200 justify-between items-center"
+        >
+          <h2 id="view-title" class="text-2xl font-bold text-gray-900">
+            Security Posture
+          </h2>
+          <div class="flex items-center gap-6">
+            <i class="fas fa-bell text-gray-400 text-xl cursor-pointer"></i>
+            <div
+              class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border border-gray-200"
+            >
+              <i class="fas fa-user-tie text-slate-500"></i>
+            </div>
+          </div>
+        </header>
+
+        <div class="p-4 lg:p-10 flex-1">
+          <div
+            id="cloud"
+            class="tab-content active space-y-4 lg:space-y-8 animate-in fade-in"
+          >
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8"
+            >
+              <div
+                class="p-6 lg:p-8 bg-white border border-gray-200 rounded-xl shadow-sm"
+              >
+                <i
+                  class="fas fa-fingerprint text-slate-600 text-xl lg:text-2xl mb-4"
+                ></i>
+                <h3
+                  class="text-gray-500 text-[10px] lg:text-xs font-bold uppercase tracking-widest mb-1"
+                >
+                  MFA Status
+                </h3>
+                <p class="text-xl lg:text-2xl font-black text-gray-900">
+                  Active
+                </p>
+              </div>
+              <div
+                class="p-6 lg:p-8 bg-white border border-gray-200 rounded-xl shadow-sm"
+              >
+                <i
+                  class="fas fa-database text-slate-600 text-xl lg:text-2xl mb-4"
+                ></i>
+                <h3
+                  class="text-gray-500 text-[10px] lg:text-xs font-bold uppercase tracking-widest mb-1"
+                >
+                  Encryption
+                </h3>
+                <p class="text-xl lg:text-2xl font-black text-gray-900">
+                  RSA-4096
+                </p>
+              </div>
+              <div
+                class="p-6 lg:p-8 bg-white border border-gray-200 rounded-xl shadow-sm sm:col-span-2 lg:col-span-1"
+              >
+                <i
+                  class="fas fa-shield-heart text-slate-600 text-xl lg:text-2xl mb-4"
+                ></i>
+                <h3
+                  class="text-gray-500 text-[10px] lg:text-xs font-bold uppercase tracking-widest mb-1"
+                >
+                  Audit Score
+                </h3>
+                <p class="text-xl lg:text-2xl font-black text-gray-900">
+                  99.2%
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="bg-slate-800 rounded-xl p-6 lg:p-12 text-center text-white relative overflow-hidden"
+            >
+              <h3 class="text-xl lg:text-3xl font-bold mb-3">
+                Asset Decommissioning
+              </h3>
+              <p
+                class="text-slate-300 text-sm lg:text-base mb-6 lg:mb-8 max-w-2xl mx-auto"
+              >
+                Select a military-standard protocol for hardware disposal.
+              </p>
+              <button
+                onclick="toggleModal(true)"
+                class="w-full sm:w-auto bg-white text-slate-800 px-8 py-3 lg:py-4 rounded-lg font-bold hover:bg-slate-100 transition-all text-sm lg:text-base shadow-lg"
+              >
+                Start Disposal Order
+              </button>
+            </div>
+          </div>
+
+          <div id="hardware" class="tab-content">
+            <div
+              class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+            >
+              <div class="overflow-x-auto">
+                <table class="w-full text-left min-w-[600px]">
+                  <thead
+                    class="bg-slate-50 text-gray-500 text-[10px] font-black uppercase tracking-widest border-b border-gray-200"
+                  >
+                    <tr>
+                      <th class="px-6 py-4">Asset Identification</th>
+                      <th class="px-6 py-4">Serial</th>
+                      <th class="px-6 py-4">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100 text-sm">
+                    <tr class="hover:bg-slate-50">
+                      <td class="px-6 py-4 font-bold">Standard Workstation</td>
+                      <td class="px-6 py-4 text-gray-500">#882-901</td>
+                      <td class="px-6 py-4">
+                        <span
+                          class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter"
+                          >In Queue</span
+                        >
+                      </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                      <td class="px-6 py-4 font-bold">Mobile Device</td>
+                      <td class="px-6 py-4 text-gray-500">#990-212</td>
+                      <td class="px-6 py-4">
+                        <span
+                          class="bg-slate-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter"
+                          >Sanitized</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="chatbot" class="tab-content h-full">
+            <div
+              class="max-w-3xl mx-auto flex flex-col h-[70vh] lg:h-[600px] border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden"
+            >
+              <div
+                class="p-4 bg-slate-50 border-b border-gray-200 font-bold text-sm lg:text-base flex items-center gap-2"
+              >
+                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                Virtual Asset Advisor
+              </div>
+              <div
+                id="chatMessages"
+                class="flex-1 p-4 lg:p-6 overflow-y-auto space-y-4 bg-slate-50/50"
+              >
+                <div class="flex justify-start">
+                  <div
+                    class="bg-white border border-gray-200 text-gray-800 px-4 py-3 rounded-xl rounded-tl-none text-sm shadow-sm max-w-[90%]"
+                  >
+                    Hello! How can I help with your assets today?
+                  </div>
+                </div>
+              </div>
+              <div class="p-4 border-t border-gray-200 bg-white">
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <input
+                    id="chatInput"
+                    type="text"
+                    placeholder="Type here..."
+                    class="flex-1 border border-gray-200 rounded-lg px-4 py-2 text-sm outline-none focus:border-slate-600"
+                  />
+                  <button
+                    onclick="sendMessage()"
+                    class="bg-slate-600 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-slate-800 transition-all"
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="reports" class="tab-content">
+            <div class="grid grid-cols-1 gap-3">
+              <div
+                class="p-4 lg:p-6 bg-white border border-gray-200 rounded-xl hover:border-slate-600 transition-all cursor-pointer flex justify-between items-center group"
+              >
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-10 h-10 lg:w-12 lg:h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 group-hover:bg-slate-600 group-hover:text-white transition-all"
+                  >
+                    <i class="fas fa-file-pdf"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm lg:text-base text-gray-900">
+                      Compliance Audit
+                    </h4>
+                    <p class="text-gray-500 text-xs">
+                      Quarterly Divergence Summary
+                    </p>
+                  </div>
+                </div>
+                <i class="fas fa-chevron-right text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="modal"
+      class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center p-4 z-50 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 lg:p-10 relative shadow-2xl"
+      >
+        <button
+          onclick="toggleModal(false)"
+          class="absolute top-4 right-4 lg:top-6 lg:right-6 text-gray-400 hover:text-gray-900"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3 class="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
+          Select Service Level
+        </h3>
+        <p class="text-xs lg:text-sm text-gray-500 mb-6 lg:mb-8">
+          Choose your sanitization protocol.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+          <div
+            class="p-6 border border-gray-200 rounded-xl hover:border-slate-600 transition-all cursor-pointer group bg-slate-50/50"
+          >
+            <i class="fas fa-eraser text-2xl text-slate-600 mb-4"></i>
+            <h4 class="font-bold text-sm lg:text-base mb-1">Software Wipe</h4>
+            <p
+              class="text-[10px] lg:text-xs text-gray-500 mb-4 leading-relaxed"
+            >
+              3-Pass software sanitization for magnetic media.
+            </p>
+            <div class="text-base lg:text-lg font-black text-slate-800">
+              $49.00
+            </div>
+          </div>
+          <div
+            class="p-6 border border-gray-200 rounded-xl hover:border-slate-600 transition-all cursor-pointer group bg-slate-50/50"
+          >
+            <i class="fas fa-shredder text-2xl text-slate-600 mb-4"></i>
+            <h4 class="font-bold text-sm lg:text-base mb-1">Physical Shred</h4>
+            <p
+              class="text-[10px] lg:text-xs text-gray-500 mb-4 leading-relaxed"
+            >
+              Cross-cut shredding with video verification.
+            </p>
+            <div class="text-base lg:text-lg font-black text-slate-800">
+              $89.00
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function switchTab(id) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) => b.classList.remove("active"));
+
+        document.getElementById(id).classList.add("active");
+        event.currentTarget.classList.add("active");
+
+        // Update title on desktop
+        const desktopTitle = document.getElementById("view-title");
+        if (desktopTitle)
+          desktopTitle.textContent = event.currentTarget.innerText;
+      }
+
+      function toggleModal(show) {
+        document.getElementById("modal").style.display = show ? "flex" : "none";
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const container = document.getElementById("chatMessages");
+        if (!input.value.trim()) return;
+
+        // User side
+        const userMsg = document.createElement("div");
+        userMsg.className = "flex justify-end";
+        userMsg.innerHTML = `<div class="bg-slate-600 text-white px-4 py-3 rounded-xl rounded-tr-none text-sm shadow-sm max-w-[85%]">${input.value}</div>`;
+        container.appendChild(userMsg);
+
+        input.value = "";
+        container.scrollTop = container.scrollHeight;
+
+        // Bot Response
+        setTimeout(() => {
+          const botMsg = document.createElement("div");
+          botMsg.className = "flex justify-start";
+          botMsg.innerHTML = `
+                <div class="bg-white border border-gray-200 text-gray-800 px-4 py-3 rounded-xl rounded-tl-none text-sm shadow-sm max-w-[85%]">
+                    Your request has been logged. An advisor will contact you shortly.
+                </div>`;
+          container.appendChild(botMsg);
+          container.scrollTop = container.scrollHeight;
+        }, 1000);
+      }
+
+      // Handle Enter key for mobile keyboards
+      document.getElementById("chatInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
+</html>
