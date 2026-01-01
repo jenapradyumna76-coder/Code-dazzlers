@@ -1,41 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Create Account | EcoSecure</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #f1f5f9; }
-        .glass { background: white; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    </style>
+  <meta charset="UTF-8" />
+  <title>EcoSecure | Secure IT Asset Disposal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="glass w-full max-w-md p-10">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-800"><i class="fas fa-leaf text-slate-600"></i> EcoSecure</h1>
-            <p class="text-slate-500 mt-2">Enterprise Asset Management</p>
-        </div>
-        <form onsubmit="event.preventDefault(); window.location.href='login.html'">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Full Name</label>
-                    <input type="text" required class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-slate-500 transition-all" placeholder="John Doe">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Work Email</label>
-                    <input type="email" required class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-slate-500 transition-all" placeholder="admin@company.com">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
-                    <input type="password" required class="w-full p-3 border-2 border-slate-100 rounded-xl outline-none focus:border-slate-500 transition-all" placeholder="••••••••">
-                </div>
-                <button type="submit" class="w-full bg-slate-700 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all shadow-lg mt-4">Create Account</button>
-            </div>
-        </form>
-        <p class="text-center mt-6 text-sm text-slate-500">Already have an account? <a href="login.html" class="text-slate-800 font-bold">Login</a></p>
-    </div>
 
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-emerald-800 to-green-700">
+    
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+    <!-- Content -->
+    <div class="relative z-10 text-center px-6 max-w-3xl">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        EcoSecure
+      </h1>
+      <p class="text-lg md:text-xl text-gray-200 mb-8">
+        Secure, Certified & Eco-Friendly IT Asset Disposal Solutions
+      </p>
+      <p class="text-md text-gray-300 mb-10">
+        Protect sensitive data while contributing to a sustainable future.
+        EcoSecure ensures complete data destruction and responsible recycling
+        of IT assets.
+      </p>
+
+      <div class="flex flex-col md:flex-row gap-4 justify-center">
+        <a href="#services"
+           class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition">
+          Explore Services
+        </a>
+        <a href="#contact"
+           class="px-6 py-3 bg-transparent border border-white hover:bg-white hover:text-green-800 text-white rounded-lg font-semibold transition">
+          Contact Us
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="services" class="py-16 px-6 bg-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6 text-green-700">
+        Why EcoSecure?
+      </h2>
+      <p class="text-gray-600 mb-10">
+        Improper disposal of IT assets can lead to data breaches and environmental
+        damage. EcoSecure combines advanced data wiping technologies with
+        sustainable recycling practices.
+      </p>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3 text-green-600">Secure Data Wiping</h3>
+          <p class="text-gray-600">
+            Certified data erasure following global security standards.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3 text-green-600">Eco-Friendly Recycling</h3>
+          <p class="text-gray-600">
+            Responsible recycling to minimize e-waste and carbon footprint.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-xl shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-3 text-green-600">Compliance & Reports</h3>
+          <p class="text-gray-600">
+            Audit-ready compliance reports and certificates of destruction.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="bg-green-900 text-gray-300 py-6 text-center">
+    <p>© 2025 EcoSecure. Secure Disposal. Sustainable Future.</p>
+  </footer>
 
 </body>
 </html>
