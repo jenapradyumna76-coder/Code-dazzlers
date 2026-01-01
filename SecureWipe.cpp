@@ -1,73 +1,89 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <chrono>
-#include <vector>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoSecure Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-btn.active { background: #334155; color: white; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex min-h-screen">
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col p-6">
+        <h1 class="text-2xl font-black mb-10"><i class="fas fa-leaf text-slate-600"></i> EcoSecure</h1>
+        <nav class="space-y-2 flex-1">
+            <button onclick="switchTab('cloud')" class="nav-btn active w-full flex items-center gap-3 p-4 rounded-xl font-bold transition-all"><i class="fas fa-shield-halved"></i> Security Overview</button>
+            <button onclick="switchTab('hardware')" class="nav-btn w-full flex items-center gap-3 p-4 rounded-xl font-bold transition-all"><i class="fas fa-microchip"></i> Asset Inventory</button>
+            <button onclick="switchTab('reports')" class="nav-btn w-full flex items-center gap-3 p-4 rounded-xl font-bold transition-all"><i class="fas fa-file-contract"></i> Audit Reports</button>
+        </nav>
+        <div class="p-4 bg-slate-900 text-white rounded-2xl">
+            <p class="text-[10px] uppercase font-bold opacity-50">Backend Status</p>
+            <p class="text-sm font-bold">SecureWipe: Online</p>
+        </div>
+    </aside>
 
-using namespace std;
-using namespace std::chrono;
+    <main class="flex-1 p-10">
+        <div id="cloud" class="tab-content active animate-in fade-in">
+            <h2 class="text-3xl font-bold mb-8">Security Posture</h2>
+            <div class="grid grid-cols-3 gap-6 mb-10">
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Audit Score</p>
+                    <p class="text-2xl font-black">99.2%</p>
+                </div>
+                <div class="p-6 bg-white rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Wipe Engine</p>
+                    <p class="text-2xl font-black text-emerald-500">Ready</p>
+                </div>
+            </div>
+            <div class="bg-slate-800 p-10 rounded-[32px] text-white">
+                <h3 class="text-2xl font-bold mb-2">Initialize Data Destruction</h3>
+                <p class="text-slate-400 mb-6">Run the SecureWipe.exe locally to process physical assets.</p>
+                <button onclick="Run SecureWipe.exe locally on your computer" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all">Start Engine</button>
+            </div>
+        </div>
 
-struct WipeResult {
-    long long bytesRemoved;
-    double timeTaken;
-};
+        <div id="hardware" class="tab-content">
+            <h2 class="text-3xl font-bold mb-8">Asset Inventory</h2>
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr><th class="p-4">ID</th><th class="p-4">Device</th><th class="p-4">Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-100"><td class="p-4">#001</td><td class="p-4">Dell Workstation</td><td class="p-4"><span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">PENDING WIPE</span></td></tr>
+                        <tr class="border-b border-slate-100"><td class="p-4">#002</td><td class="p-4">MacBook Pro</td><td class="p-4"><span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">SANITIZED</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-WipeResult performFullWipe(string path) {
-    auto start = high_resolution_clock::now();
-    ifstream reader(path, ios::binary | ios::ate);
-    if (!reader.is_open()) return {0, 0};
-    long long fileSize = reader.tellg();
-    reader.close();
+        <div id="reports" class="tab-content">
+            <h2 class="text-3xl font-bold mb-8">Audit Reports</h2>
+            <div class="space-y-4">
+                <div onclick="window.open('VisualReport.html', '_blank')" class="p-6 bg-white rounded-2xl border-2 border-dashed border-slate-200 hover:border-slate-800 cursor-pointer transition-all flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-file-pdf"></i></div>
+                        <div>
+                            <p class="font-bold">Latest Destruction Certificate</p>
+                            <p class="text-sm text-slate-500">Generated by C++ SecureWipe Engine</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-external-link-alt text-slate-300"></i>
+                </div>
+            </div>
+        </div>
+    </main>
 
-    for (int layer = 1; layer <= 3; layer++) {
-        ofstream writer(path, ios::binary | ios::trunc);
-        char pattern = (layer == 1) ? '0' : (layer == 2 ? '1' : '#');
-        for (long long i = 0; i < fileSize; i++) writer.put(pattern);
-        writer.close();
-        cout << "[Processing] Pass " << layer << " complete..." << endl;
-    }
-
-    auto stop = high_resolution_clock::now();
-    return {fileSize, duration<double>(stop - start).count()};
-}
-
-void generateVisualReport(string client, string id, string tech, WipeResult res) {
-    ofstream html("VisualReport.html");
-    html << "<!DOCTYPE html><html><head><style>"
-         << "body { background: #0f172a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }"
-         << ".card { background: #1e293b; padding: 40px; border-radius: 20px; border: 1px solid #334155; width: 500px; text-align: center; }"
-         << ".status { color: #10b981; font-weight: bold; font-size: 24px; margin-bottom: 20px; }"
-         << ".detail { margin: 10px 0; color: #94a3b8; }"
-         << "span { color: #38bdf8; font-weight: bold; }"
-         << "</style></head><body><div class='card'>"
-         << "<div class='status'>✓ DESTRUCTION COMPLETE</div>"
-         << "<h2>Certificate of Sanitization</h2>"
-         << "<div class='detail'>Client: <span>" << client << "</span></div>"
-         << "<div class='detail'>Order ID: <span>#" << id << "</span></div>"
-         << "<div class='detail'>Bytes Overwritten: <span>" << res.bytesRemoved << "</span></div>"
-         << "<div class='detail'>Technician: <span>" << tech << "</span></div>"
-         << "<br><button onclick='window.print()'>Download PDF Report</button>"
-         << "</div></body></html>";
-    html.close();
-}
-
-int main() {
-    string path, id, client, tech;
-    cout << "ECOSECURE BACKEND ENGINE\n------------------------\n";
-    cout << "Client Name: "; getline(cin, client);
-    cout << "Order ID:    "; getline(cin, id);
-    cout << "Technician:  "; getline(cin, tech);
-    cout << "File Path:   "; getline(cin, path);
-
-    if (!path.empty() && (path.front() == '"')) { path.erase(0, 1); path.erase(path.size() - 1); }
-
-    WipeResult res = performFullWipe(path);
-    if (res.bytesRemoved > 0) {
-        generateVisualReport(client, id, tech, res);
-        cout << "\n[SUCCESS] Report generated: VisualReport.html\n";
-    } else {
-        cout << "\n[ERROR] File access denied.\n";
-    }
-    system("pause");
-    return 0;
-}
+    <script>
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
