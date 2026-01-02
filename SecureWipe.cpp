@@ -78,3 +78,7 @@ int main() {
     cin.get();
     return 0;
 }
+// After the file is destroyed...
+ofstream report("VisualReport.html"); 
+report << "<html><body><h1>File Securely Destroyed</h1></body></html>";
+report.close();
