@@ -38,23 +38,18 @@
                     <p class="text-2xl font-black text-emerald-500">Ready</p>
                 </div>
             </div>
-            <div class="bg-slate-800 p-10 rounded-[32px] text-white">
-                <h3 class="text-2xl font-bold mb-2">Initialize Data Destruction</h3>
-                <p class="text-slate-400 mb-6">Run the SecureWipe.exe locally to process physical assets.</p>
-<button onclick="showWipeInstructions()" 
-  class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all">
-  Start Engine
-</button>
-                <script>
-function showWipeInstructions() {
-  alert(
-    "SecureWipe must be run locally.\n\n" +
-    "Steps:\n" +
-    "1. Go to the EcoSecure tools folder\n" +
-    "2. Right-click SecureWipe.exe\n" +
-    "3. Run as Administrator\n\n" +
-    "The dashboard will auto-update after completion."
-  );
+            <div class="action-card">
+    <h3>Step 1: Launch Engine</h3>
+    <p>Open <b>SecureWipe.exe</b> from your project folder.</p>
+    
+    <h3>Step 2: Verification</h3>
+    <button onclick="checkReport()">View Destruction Certificate</button>
+</div>
+
+<script>
+function checkReport() {
+    // This tells the browser to look for the file the C++ engine just made
+    window.location.href = "VisualReport.html";
 }
 </script>
 
