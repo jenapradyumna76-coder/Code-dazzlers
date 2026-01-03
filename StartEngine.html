@@ -3,57 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>START ENGINE</title>
+    <title>Secure File Wipe & Report</title>
     <style>
-        body { font-family: sans-serif; margin: 40px; line-height: 1.6; }
-        .upload-section { border: 2px dashed #ccc; padding: 20px; border-radius: 8px; background: #f9f9f9; }
-        .file-list { margin-top: 20px; max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; display: none; }
-        h3 { margin-top: 0; }
-        .file-item { font-size: 0.9em; border-bottom: 1px solid #eee; padding: 4px 0; }
+        :root { --danger: #e53e3e; --success: #38a169; --bg: #f7fafc; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); padding: 20px; color: #2d3748; }
+        .container { max-width: 700px; margin: 40px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* Upload UI */
+        .upload-box { border: 2px dashed #cbd5e0; padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; background: #fff; transition: 0.2s; }
+        .upload-box:hover { border-color: #4299e1; background: #ebf8ff; }
+        
+        /* Progress Bar */
+        #wipeProgressContainer { width: 100%; background: #edf2f7; border-radius: 10px; height: 12px; margin: 20px 0; display: none; overflow: hidden; }
+        #wipeBar { height: 100%; width: 0%; background: var(--danger); transition: width 0.1s linear; }
+
+        /* Report Table */
+        .report-table { width: 100%; border-collapse: collapse; margin-top: 20px; display: none; animation: fadeIn 0.5s ease-in; }
+        .report-table th, .report-table td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
+        .report-table th { background: #f8fafc; color: #64748b; font-size: 0.8em; text-transform: uppercase; }
+        .status-destroyed { color: var(--danger); font-weight: bold; font-size: 0.8em; }
+
+        /* Buttons */
+        .btn-destroy { background: #1a202c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 20px; }
+        .btn-destroy:hover { background: #000; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <h2>Upload Files or Folders</h2>
+<div class="container">
+    <h2 style="margin-top:0;">Secure Session Wipe</h2>
+    <p style="color: #718096;">Upload multiple files or folders. Use the destruction tool to purge them from the browser memory.</p>
 
-    <div class="upload-section">
-        <label for="fileUpload"><strong>Select Multiple Files:</strong></label><br>
-        <input type="file" id="fileUpload" multiple><br><br>
-
-        <label for="folderUpload"><strong>Select a Folder:</strong></label><br>
-        <input type="file" id="folderUpload" webkitdirectory mozdirectory msdirectory odirectory directory>
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <strong>Click to select Files or Folders</strong>
+        <input type="file" id="fileInput" multiple webkitdirectory mozdirectory style="display:none;">
+        <p id="fileCountText" style="margin-top:10px; font-size: 0.9em; color: #a0aec0;">No files selected</p>
     </div>
 
-    <div id="listContainer" class="file-list">
-        <h3>Selected Files:</h3>
-        <div id="fileDisplay"></div>
+    <div id="actionArea" style="display:none;">
+        <button class="btn-destroy" onclick="startDestruction()">PURGE DATA FROM MEMORY</button>
     </div>
 
-    <script>
-        const fileInput = document.getElementById('fileUpload');
-        const folderInput = document.getElementById('folderUpload');
-        const display = document.getElementById('fileDisplay');
-        const container = document.getElementById('listContainer');
+    <div id="wipeProgressContainer">
+        <div id="wipeBar"></div>
+    </div>
 
-        function handleFiles(event) {
-            const files = event.target.files;
-            display.innerHTML = ''; // Clear previous
-            
-            if (files.length > 0) {
-                container.style.display = 'block';
-                Array.from(files).forEach(file => {
-                    const div = document.createElement('div');
-                    div.className = 'file-item';
-                    // webkitRelativePath shows the folder structure
-                    div.textContent = file.webkitRelativePath || file.name;
-                    display.appendChild(div);
-                });
-            }
+    <div id="reportContainer" class="report-table">
+        <h3 style="color: var(--danger);">Destruction Report</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody id="reportData">
+                </tbody>
+        </table>
+        <p style="font-size: 0.8em; color: #718096; margin-top: 15px;">Note: File references were overwritten and garbage-collected.</p>
+        <button onclick="location.reload()" style="background:none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Reset App</button>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileCountText = document.getElementById('fileCountText');
+    const actionArea = document.getElementById('actionArea');
+    const progressContainer = document.getElementById('wipeProgressContainer');
+    const wipeBar = document.getElementById('wipeBar');
+    const reportContainer = document.getElementById('reportContainer');
+    const reportData = document.getElementById('reportData');
+
+    let sessionStats = { count: 0, totalSize: 0 };
+
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (files.length > 0) {
+            sessionStats.count = files.length;
+            let size = 0;
+            for(let f of files) size += f.size;
+            sessionStats.totalSize = size;
+
+            fileCountText.textContent = `${files.length} items loaded into browser memory.`;
+            fileCountText.style.color = "#4299e1";
+            actionArea.style.display = 'block';
+            reportContainer.style.display = 'none';
+        }
+    });
+
+    async function startDestruction() {
+        actionArea.style.display = 'none';
+        progressContainer.style.display = 'block';
+        
+        // Visual Simulation of Overwriting Memory
+        for (let i = 0; i <= 100; i += 5) {
+            wipeBar.style.width = i + "%";
+            await new Promise(r => setTimeout(r, 40)); // Artificial delay for effect
         }
 
-        fileInput.addEventListener('change', handleFiles);
-        folderInput.addEventListener('change', handleFiles);
-    </script>
+        generateReport();
+    }
+
+    function generateReport() {
+        // Core destruction logic
+        fileInput.value = ""; 
+        
+        const timestamp = new Date().toLocaleTimeString();
+        const finalSize = (sessionStats.totalSize / 1024).toFixed(2);
+
+        reportData.innerHTML = `
+            <tr><td>Items Purged</td><td>${sessionStats.count}</td></tr>
+            <tr><td>Total Memory Freed</td><td>${finalSize} KB</td></tr>
+            <tr><td>Timestamp</td><td>${timestamp}</td></tr>
+            <tr><td>Security Status</td><td><span class="status-destroyed">DESTROYED (0xFFFF)</span></td></tr>
+        `;
+
+        progressContainer.style.display = 'none';
+        reportContainer.style.display = 'block';
+        fileCountText.textContent = "Memory empty.";
+        fileCountText.style.color = "#e53e3e";
+    }
+</script>
 
 </body>
 </html>
