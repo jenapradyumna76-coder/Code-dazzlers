@@ -42,11 +42,14 @@
                 <h3 class="text-2xl font-bold mb-2">Initialize Data Destruction</h3>
                 <p class="text-slate-400 mb-6">Run the StartEngine  process physical assets.</p>
 
-                 <button oneclick="main.js()" class="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all shadow-lg mt-4"
-}"> Start Engine</button>
+                 <button oneclick="StartEngine()" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all"> Start Engine</button>
      
-
-
+<script>
+    function StartEngine()
+    {
+          window.location.href = "StartEngine.html";
+    }
+</script>
 <script>
 function checkReport() {
     // This tells the browser to look for the file the C++ engine just made
