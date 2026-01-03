@@ -1,0 +1,108 @@
+const fs = require('fs');
+const path = require('path');
+
+function generateReport(targets) {
+    const now = new Date();
+    let rows = targets.map(t => `
+        <tr>
+            <td>${t.name}</td>
+            <td>${t.size} bytes</td>
+            <td>Passed</td>
+        </tr>`).join('');
+
+    const report = `<html><head><style>
+    body { font-family: sans-serif; background: #f0f2f5; padding: 40px; display: flex; justify-content: center; }
+    .card { background: white; border-top: 10px solid #d32f2f; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 600px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9em; }
+    .status { color: #d32f2f; font-weight: bold; }
+    </style></head><body>
+    <div class='card'>
+        <h2>☣️ Bulk Shred Audit Report</h2>
+        <p class='status'>TOTAL FILES WIPED: ${targets.length}</p>
+        <hr>
+        <table>
+            <tr><th>File Name</th><th>Size</th><th>Status</th></tr>
+            ${rows}
+        </table>
+        <p><br><strong>Timestamp:</strong> ${now.toLocaleString()}</p>
+    </div></body></html>`;
+
+    fs.writeFileSync('BulkVisualReport.html', report);
+}
+
+function shredFile(filePath) {
+    const size = fs.statSync(filePath).size;
+    const fd = fs.openSync(filePath, 'r+');
+
+    for (let pass = 1; pass <= 3; pass++) {
+        const buffer = Buffer.alloc(size);
+        if (pass === 1) buffer.fill(0x00);
+        else if (pass === 2) buffer.fill(0xff);
+        else {
+            for (let i = 0; i < size; i++) buffer[i] = Math.floor(Math.random() * 256);
+        }
+        fs.writeSync(fd, buffer, 0, size, 0);
+        fs.fsyncSync(fd); 
+    }
+    fs.closeSync(fd);
+    fs.unlinkSync(filePath);
+    return size;
+}
+
+function shredDirectory(dirPath, reportData = []) {
+    const files = fs.readdirSync(dirPath);
+
+    for (const file of files) {
+        const fullPath = path.join(dirPath, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+            shredDirectory(fullPath, reportData); // Recurse into subfolders
+            fs.rmdirSync(fullPath); // Remove empty folder
+        } else {
+            console.log(`Shredding: ${file}...`);
+            const size = shredFile(fullPath);
+            reportData.push({ name: file, size: size });
+        }
+    }
+    return reportData;
+}
+
+function main() {
+    const readline = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    console.log("========================================");
+    console.log("    ECO-SECURE BULK SHREDDING ENGINE    ");
+    console.log("========================================");
+
+    readline.question("Enter FILE or FOLDER path to wipe: ", (input) => {
+        const targetPath = input.replace(/['"]/g, '').trim();
+
+        try {
+            if (!fs.existsSync(targetPath)) throw new Error("Path not found.");
+
+            let reportData = [];
+            if (fs.statSync(targetPath).isDirectory()) {
+                console.log("Directory detected. Starting recursive wipe...");
+                reportData = shredDirectory(targetPath);
+                // Optionally remove the root folder itself:
+                // fs.rmdirSync(targetPath); 
+            } else {
+                const size = shredFile(targetPath);
+                reportData.push({ name: path.basename(targetPath), size: size });
+            }
+
+            console.log("\n✅ OPERATION COMPLETE.");
+            generateReport(reportData);
+            console.log("Audit Report Generated: BulkVisualReport.html");
+
+        } catch (err) {
+            console.error("\n❌ ERROR:", err.message);
+        }
+        readline.close();
+    });
+}
+
+main();
