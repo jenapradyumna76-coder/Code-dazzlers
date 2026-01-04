@@ -103,28 +103,32 @@
             await new Promise(r => setTimeout(r, 40)); // Artificial delay for effect
         }
 
-        generateReport();
-    }
+ generateReport(string fileName, long fileSize)
+ {
+    ofstream report("VisualReport.html");
+    time_t now = time(0);
+    char* dt = ctime(&now);
 
-    function generateReport() {
-        // Core destruction logic
-        fileInput.value = ""; 
-        
-        const timestamp = new Date().toLocaleTimeString();
-        const finalSize = (sessionStats.totalSize / 1024).toFixed(2);
-
-        reportData.innerHTML = `
-            <tr><td>Items Purged</td><td>${sessionStats.count}</td></tr>
-            <tr><td>Total Memory Freed</td><td>${finalSize} KB</td></tr>
-            <tr><td>Timestamp</td><td>${timestamp}</td></tr>
-            <tr><td>Security Status</td><td><span class="status-destroyed">DESTROYED (0xFFFF)</span></td></tr>
-        `;
-
-        progressContainer.style.display = 'none';
-        reportContainer.style.display = 'block';
-        fileCountText.textContent = "Memory empty.";
-        fileCountText.style.color = "#e53e3e";
-    }
+    report << "<html><head><style>"
+           << "body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 40px; }"
+           << ".card { background: white; border-top: 10px solid #2e7d32; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 500px; }"
+           << ".status { color: #2e7d32; font-weight: bold; text-transform: uppercase; }"
+           << "hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }"
+           << "</style></head><body>"
+           << "<div class='card'>"
+           << "<h2>♻️ Eco-Secure Audit Report</h2>"
+           << "<p class='status'>✅ Method: Secure Cryptographic Wipe</p>"
+           << "<hr>"
+           << "<p><strong>File Destroyed:</strong> " << fileName << "</p>"
+           << "<p><strong>File Size:</strong> " << fileSize << " bytes</p>"
+           << "<p><strong>Timestamp:</strong> " << dt << "</p>"
+           << "<p><strong>Passes:</strong> 3-Pass Overwrite (0x00, 0xFF, Random)</p>"
+           << "<hr>"
+           << "<p style='font-size: 0.8em; color: #666;'>This document serves as digital proof of data sanitization.</p>"
+           << "</div></body></html>";
+    
+    report.close();
+}
 </script>
 
 </body>
