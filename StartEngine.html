@@ -68,40 +68,55 @@
 </div>
 
 <script>
-    const fileInput = document.getElementById('fileInput');
-    const fileCountText = document.getElementById('fileCountText');
-    const actionArea = document.getElementById('actionArea');
-    const progressContainer = document.getElementById('wipeProgressContainer');
-    const wipeBar = document.getElementById('wipeBar');
-    const reportContainer = document.getElementById('reportContainer');
-    const reportData = document.getElementById('reportData');
+    int main() {
+    string filePath;
+    cout << "========================================" << endl;
+    cout << "      ECO-SECURE SHREDDING ENGINE       " << endl;
+    cout << "========================================" << endl;
+    cout << "Enter filename to securely wipe: ";
+    cin >> filePath;
 
-    let sessionStats = { count: 0, totalSize: 0 };
+    // 1. Open file to check size
+    ifstream inFile(filePath, ios::binary | ios::ate);
+    if (!inFile) {
+        cout << "Error: File not found!" << endl;
+        return 1;
+    }
+    long size = inFile.tellg();
+    inFile.close();
 
-    fileInput.addEventListener('change', (e) => {
-        const files = e.target.files;
-        if (files.length > 0) {
-            sessionStats.count = files.length;
-            let size = 0;
-            for(let f of files) size += f.size;
-            sessionStats.totalSize = size;
-
-            fileCountText.textContent = `${files.length} items loaded into browser memory.`;
-            fileCountText.style.color = "#4299e1";
-            actionArea.style.display = 'block';
-            reportContainer.style.display = 'none';
+    // 2. Perform Overwrite (The "Shredding")
+    cout << "Shredding " << filePath << " (" << size << " bytes)..." << endl;
+    
+    ofstream outFile(filePath, ios::binary);
+    for (int pass = 1; pass <= 3; pass++) {
+        cout << "Pass " << pass << "/3..." << endl;
+        outFile.seekp(0);
+        for (int i = 0; i < size; i++) {
+            char junk = (pass == 1) ? 0 : (pass == 2) ? 0xFF : rand() % 256;
+            outFile.put(junk);
         }
-    });
+    }
+    outFile.close();
 
-    async function startDestruction() {
-        actionArea.style.display = 'none';
-        progressContainer.style.display = 'block';
-        
-        // Visual Simulation of Overwriting Memory
-        for (let i = 0; i <= 100; i += 5) {
-            wipeBar.style.width = i + "%";
-            await new Promise(r => setTimeout(r, 40)); // Artificial delay for effect
-        }
+    // 3. Delete the file
+    if (remove(filePath.c_str()) == 0) {
+        cout << "SUCCESS: File physically removed from disk." << endl;
+        generateReport(filePath, size); // Create the Visual Report
+        cout << "Audit Report Generated: VisualReport.html" << endl;
+    } else {
+        cout << "Error deleting file." << endl;
+    }
+
+    cout << "\nPress Enter to exit...";
+    cin.ignore();
+    cin.get();
+    return 0;
+}
+// After the file is destroyed...
+ofstream report("VisualReport.html"); 
+report << "<html><body><h1>File Securely Destroyed</h1></body></html>";
+report.close();
 
  generateReport(string fileName, long fileSize)
  {
