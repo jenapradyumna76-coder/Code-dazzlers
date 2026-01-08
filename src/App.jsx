@@ -1,13 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import About from '@/components/About';
-import PracticeCarousel from '@/components/PracticeCarousel';
-import Location from '@/components/Location';
-import Footer from '@/components/Footer';
-import BackToTopButton from '@/components/BackToTopButton';
-import { Toaster } from '@/components/ui/toaster';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import About from './components/About';
+import PracticeCarousel from './components/PracticeCarousel';
+import Location from './components/Location';
+import Footer from './components/Footer';
+import BackToTopButton from './components/BackToTopButton';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   const sections = {
