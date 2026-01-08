@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 // FIXED: Changed from "@/hooks/useInView" to "../hooks/useInView"
-import { useInView } from '../hooks/useInView'; 
+import { useInView } from '../hooks/useInView.js';
 import { Shield, Leaf, Globe, Recycle } from 'lucide-react';
 
 const About = () => {

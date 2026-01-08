@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 // Fixed imports: replaced @ with ./
 import { Button } from './ui/button';
-import { useToast } from './ui/use-toast';
+import { useToast } from '../hooks/use-toast.js';
 
 const Hero = () => {
   const { toast } = useToast();
