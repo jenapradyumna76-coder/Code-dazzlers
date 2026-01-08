@@ -13,31 +13,24 @@ function App() {
   const sections = {
     hero: { id: 'home', title: 'Home' },
     about: { id: 'about', title: 'About' },
-    services: { id: 'services', title: 'Our Services' }, // Renamed from 'practices' to 'services'
+    services: { id: 'services', title: 'Our Services' },
     location: { id: 'location', title: 'Location' },
   };
 
   return (
     <>
       <Helmet>
-        <title>Eco Secure - Data Wipe & E-Waste Management</title> {/* Updated title */}
-        <meta name="description" content="Eco Secure provides certified data destruction and responsible e-waste recycling services for businesses and individuals." /> {/* Updated description */}
+        <title>Eco Secure - Data Wipe & E-Waste Management</title>
+        <meta name="description" content="Eco Secure provides certified data destruction and responsible e-waste recycling." />
       </Helmet>
+      
       <div className="min-h-screen bg-white">
         <Header sections={Object.values(sections)} />
         <main>
-          <div id={sections.hero.id}>
-            <Hero />
-          </div>
-          <div id={sections.about.id}>
-            <About />
-          </div>
-          <div id={sections.services.id}> {/* Updated id to 'services' */}
-            <PracticeCarousel />
-          </div>
-          <div id={sections.location.id}>
-            <Location />
-          </div>
+          <div id={sections.hero.id}><Hero /></div>
+          <div id={sections.about.id}><About /></div>
+          <div id={sections.services.id}><PracticeCarousel /></div>
+          <div id={sections.location.id}><Location /></div>
         </main>
         <Footer sections={Object.values(sections)} />
         <BackToTopButton />
