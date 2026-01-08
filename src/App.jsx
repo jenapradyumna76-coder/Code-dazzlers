@@ -1,42 +1,25 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
-import Header from './components/Header';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import Hero from './components/Hero';
 import About from './components/About';
-import PracticeCarousel from './components/PracticeCarousel';
-import Location from './components/Location';
-import Footer from './components/Footer';
-import BackToTopButton from './components/BackToTopButton';
-import { Toaster } from './components/ui/toaster';
+// Add other component imports here (Navbar, Footer, etc.)
 
 function App() {
-  const sections = {
-    hero: { id: 'home', title: 'Home' },
-    about: { id: 'about', title: 'About' },
-    services: { id: 'services', title: 'Our Services' },
-    location: { id: 'location', title: 'Location' },
-  };
-
   return (
-    <>
-      <Helmet>
-        <title>Eco Secure - Data Wipe & E-Waste Management</title>
-        <meta name="description" content="Eco Secure provides certified data destruction and responsible e-waste recycling." />
-      </Helmet>
-      
+    <HelmetProvider>
       <div className="min-h-screen bg-white">
-        <Header sections={Object.values(sections)} />
+        <Helmet>
+          <title>EcoSecure | Secure Data Destruction</title>
+          <meta name="description" content="Certified data erasure and sustainable e-waste management." />
+        </Helmet>
+        
         <main>
-          <div id={sections.hero.id}><Hero /></div>
-          <div id={sections.about.id}><About /></div>
-          <div id={sections.services.id}><PracticeCarousel /></div>
-          <div id={sections.location.id}><Location /></div>
+          <Hero />
+          <About />
+          {/* Add your other sections here */}
         </main>
-        <Footer sections={Object.values(sections)} />
-        <BackToTopButton />
-        <Toaster />
       </div>
-    </>
+    </HelmetProvider>
   );
 }
 
