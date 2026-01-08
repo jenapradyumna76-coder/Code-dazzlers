@@ -1,11 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-// Fixed imports: replaced @/ with relative paths
+// FIXED: Changed from "@/hooks/useInView" to "../hooks/useInView"
 import { useInView } from '../hooks/useInView'; 
 import { Shield, Leaf, Globe, Recycle } from 'lucide-react';
 
 const About = () => {
-  const [ref, isInView] = useInView({ threshold: 0.2 });
+  // Check if your hook returns an array or object. 
+  // Most "useInView" hooks return [ref, isInView]
+  const [ref, isInView] = useInView({ 
+    threshold: 0.2,
+    triggerOnce: true 
+  });
 
   const stats = [
     { label: 'Data Destroyed', value: '100%', icon: Shield },
@@ -20,7 +25,7 @@ const About = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -45,7 +50,7 @@ const About = () => {
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
