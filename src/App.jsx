@@ -11,19 +11,39 @@ const Dashboard = ({ userDB }) => {
   const [gbAmount, setGbAmount] = useState(0);
   const [description, setDescription] = useState('');
   const [orders, setOrders] = useState([]); 
-  const [chatHistory, setChatHistory] = useState([{ role: 'bot', text: `EcoSecure ready for ${userDB?.company || 'your company'}. How can I help?` }]);
+  const [chatHistory, setChatHistory] = useState([{ role: 'bot', text: `EcoSecure AI ready for ${userDB?.company}. How can I assist you with your data security today?` }]);
   const [userInput, setUserInput] = useState('');
 
-  // 1. GENERATE ORDER (Used for both Wipe and E-Waste)
+  // 1. IMPROVED AI CHAT LOGIC (Working Responses)
+  const handleSendMessage = () => {
+    if (!userInput.trim()) return;
+    const newChat = [...chatHistory, { role: 'user', text: userInput }];
+    setChatHistory(newChat);
+    const query = userInput.toLowerCase();
+    setUserInput('');
+
+    setTimeout(() => {
+      let reply = "I'm analyzing your request. For specific service pricing, please check our 'Full Wipe' or 'E-Waste' sections.";
+      if (query.includes('hello') || query.includes('hi')) reply = `Hello! How can EcoSecure help ${userDB?.company} today?`;
+      if (query.includes('price') || query.includes('cost')) reply = "Our standard rate is ₹1 per GB for both digital wiping and e-waste data sanitization.";
+      if (query.includes('safe') || query.includes('secure')) reply = "All destruction is performed at our specialized site under a 24/7 secure, monitored environment.";
+      if (query.includes('technician')) reply = "Once an order is placed, a technician is dispatched to your registered address for pickup.";
+      
+      setChatHistory([...newChat, { role: 'bot', text: reply }]);
+    }, 800);
+  };
+
+  // 2. GENERATE ORDER
   const generateOrder = (type, device = "N/A") => {
     const newOrder = {
       id: "ECO-" + Math.floor(Math.random() * 1000000),
       type: type,
       device: device,
       gb: gbAmount,
+      cost: gbAmount * 1,
       company: userDB?.company,
       address: userDB?.address,
-      status: "Technician Assigned",
+      status: "Technician Dispatched",
       reportGenerated: false,
       date: new Date().toLocaleDateString()
     };
@@ -45,17 +65,15 @@ const Dashboard = ({ userDB }) => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-emerald-100">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Welcome, {userDB?.company}</h1>
+            <h1 className="text-2xl font-bold text-slate-800">{userDB?.company}</h1>
             <p className="text-sm text-slate-500">{userDB?.address}</p>
           </div>
-          <div className="text-right">
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase">Verified Account</span>
-          </div>
+          <Button variant="outline" className="text-xs" onClick={() => window.location.href = '/'}>Logout</Button>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {features.map((f) => (
-            <div key={f.id} onClick={() => setActiveTab(f.id)} className="p-4 bg-white rounded-xl shadow-sm border hover:border-emerald-500 cursor-pointer transition-all text-center">
+            <div key={f.id} onClick={() => { setActiveTab(f.id); setGbAmount(0); }} className="p-4 bg-white rounded-xl shadow-sm border hover:border-emerald-500 cursor-pointer transition-all text-center">
               <div className="text-3xl mb-2">{f.icon}</div>
               <h3 className="text-xs font-bold mb-1">{f.title}</h3>
             </div>
@@ -67,74 +85,98 @@ const Dashboard = ({ userDB }) => {
             <div className="bg-white p-6 rounded-2xl max-w-lg w-full relative max-h-[85vh] overflow-y-auto">
               <button onClick={() => setActiveTab(null)} className="absolute top-4 right-4 text-gray-400">✕</button>
               
-              {/* --- SERVICES DESCRIPTION --- */}
+              {/* --- UPDATED SERVICES DESCRIPTION --- */}
               {activeTab === 'services' && (
                 <div>
-                  <h2 className="text-xl font-bold mb-4 text-emerald-700">EcoSecure Services</h2>
+                  <h2 className="text-xl font-bold mb-4 text-emerald-700">Service Portfolio</h2>
                   <div className="space-y-4 text-sm text-slate-600">
-                    <p><strong>1. Data Sanitization:</strong> NIST 800-88 compliant erasure for HDDs, SSDs, and Servers.</p>
-                    <p><strong>2. E-Waste Pickup:</strong> Doorstep hardware collection for sustainable recycling.</p>
-                    <p><strong>3. On-Site Shredding:</strong> Physical destruction of storage media at your company location.</p>
-                    <p><strong>4. Compliance Audit:</strong> Full documentation and Green Certificates for ESG reporting.</p>
+                    <p><strong>1. Data Sanitization:</strong> High-level digital wiping for servers and cloud storage.</p>
+                    <p><strong>2. E-Waste Pickup:</strong> Secure collection of hardware from your corporate location.</p>
+                    <p><strong>3. Off-Site Destruction:</strong> <span className="text-emerald-700 font-semibold">Destruction will be done on our site under a secure environment</span> to ensure zero data leakage.</p>
+                    <p><strong>4. LLM-Based Auditing:</strong> Smart reporting for your annual ESG and compliance filings.</p>
                   </div>
                 </div>
               )}
 
-              {/* --- E-WASTE MANAGEMENT (NEW WORKFLOW) --- */}
+              {/* --- E-WASTE WITH PRICING --- */}
               {activeTab === 'ewaste' && (
                 <div>
-                  <h2 className="text-xl font-bold mb-4">Request E-Waste Pickup</h2>
-                  <input type="text" className="w-full p-2 border rounded mb-3" placeholder="Device Name (e.g. Laptop, Server)" id="deviceName" />
-                  <textarea className="w-full p-2 border rounded mb-3" placeholder="What should we do? (e.g. Shredding, Recycling)" id="action" />
-                  <input type="number" className="w-full p-2 border rounded mb-4" placeholder="Amount of Data inside (GB)" onChange={(e) => setGbAmount(e.target.value)} />
-                  <div className="bg-blue-50 p-3 rounded mb-4 text-xs text-blue-800">
-                    Our technician will arrive at <strong>{userDB?.address}</strong> for this pickup.
-                  </div>
-                  <Button className="w-full bg-emerald-600" onClick={() => generateOrder('E-Waste', document.getElementById('deviceName').value)}>Proceed</Button>
+                  <h2 className="text-xl font-bold mb-4">E-Waste Logistics</h2>
+                  <input type="text" className="w-full p-2 border rounded mb-3" placeholder="Device (e.g. HDD, Laptop)" id="ew-device" />
+                  <textarea className="w-full p-2 border rounded mb-3" placeholder="Disposal Instructions..." id="ew-action" />
+                  <input type="number" className="w-full p-2 border rounded mb-2" placeholder="Est. Data Volume (GB)" onChange={(e) => setGbAmount(e.target.value)} />
+                  <p className="text-lg font-bold text-emerald-700 mb-4">Total Quote: ₹{gbAmount * 1}</p>
+                  <p className="text-[10px] text-slate-500 mb-4">Note: Technician will verify volume at {userDB?.address}</p>
+                  <Button className="w-full bg-emerald-600" onClick={() => generateOrder('E-Waste', document.getElementById('ew-device').value)}>Proceed to Pickup</Button>
                 </div>
               )}
 
-              {/* --- FULL WIPE --- */}
-              {activeTab === 'wipe' && (
-                <div>
-                  <h2 className="text-xl font-bold mb-4">Setup Remote Data Wipe</h2>
-                  <input type="number" className="w-full p-2 border rounded mb-3" placeholder="Amount (GB)" onChange={(e) => setGbAmount(e.target.value)} />
-                  <textarea className="w-full p-2 border rounded mb-4" placeholder="Software details..." onChange={(e) => setDescription(e.target.value)} />
-                  <Button className="w-full bg-emerald-600" onClick={() => generateOrder('Digital Wipe')}>Submit Request</Button>
+              {/* --- CHATBOT (ACTIVE) --- */}
+              {activeTab === 'chat' && (
+                <div className="flex flex-col h-96">
+                  <h2 className="text-xl font-bold mb-4">EcoSecure AI</h2>
+                  <div className="flex-1 bg-slate-50 p-3 rounded mb-3 overflow-y-auto text-sm space-y-3">
+                    {chatHistory.map((m, i) => (
+                      <div key={i} className={`p-2 rounded-lg max-w-[85%] ${m.role === 'bot' ? 'bg-emerald-100 self-start' : 'bg-blue-600 text-white self-end ml-auto'}`}>
+                        {m.text}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <input className="flex-1 p-2 border rounded text-sm" placeholder="Ask about security..." value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} />
+                    <Button className="bg-emerald-600" onClick={handleSendMessage}>Ask</Button>
+                  </div>
                 </div>
               )}
 
               {/* --- RECEIPT VIEW --- */}
               {activeTab === 'receipt' && (
-                <div className="text-center">
-                  <div className="text-4xl mb-4">🚛</div>
-                  <h2 className="text-2xl font-bold mb-2 text-emerald-600">Request Confirmed!</h2>
-                  <p className="mb-4 text-sm">Order <strong>{orders[orders.length-1]?.id}</strong> is active.</p>
-                  <div className="bg-slate-50 p-4 rounded text-left text-xs mb-6">
-                    <p className="font-bold text-blue-600 mb-2">Technician Status: Will reach you shortly.</p>
-                    <p><strong>Company:</strong> {userDB?.company}</p>
-                    <p><strong>Location:</strong> {userDB?.address}</p>
+                <div className="text-center py-4">
+                  <div className="text-5xl mb-4">✅</div>
+                  <h2 className="text-2xl font-bold text-emerald-600 mb-2">Request Logged</h2>
+                  <p className="text-sm mb-6">Order <strong>{orders[orders.length-1]?.id}</strong> is now live.</p>
+                  <div className="bg-slate-50 p-4 rounded-xl text-left text-xs mb-6 border">
+                    <p className="text-blue-600 font-bold mb-1 italic text-center">Our technician will reach you shortly.</p>
+                    <hr className="my-2" />
+                    <p><strong>Device:</strong> {orders[orders.length-1]?.device}</p>
+                    <p><strong>Service:</strong> {orders[orders.length-1]?.type}</p>
+                    <p><strong>Cost:</strong> ₹{orders[orders.length-1]?.cost}</p>
+                    <p><strong>Pickup:</strong> {userDB?.address}</p>
                   </div>
                   <Button className="w-full" onClick={() => setActiveTab('track')}>Track Order</Button>
                 </div>
               )}
 
-              {/* --- TRACKING & REPORTS (SAME AS BEFORE) --- */}
+              {/* --- OTHER TABS (TRACK/WIPE/REPORT) --- */}
               {activeTab === 'track' && (
                 <div>
                   <h2 className="text-xl font-bold mb-4">Live Tracking</h2>
-                  {orders.map((o, i) => (
-                    <div key={i} className="p-3 border rounded mb-2 bg-slate-50 text-xs">
-                      <div className="flex justify-between font-bold"><span>{o.id} ({o.type})</span><span className="text-blue-600">{o.status}</span></div>
-                      <p className="mt-1">Device: {o.device} | Data: {o.gb}GB</p>
-                    </div>
-                  ))}
+                  {orders.length === 0 ? <p className="text-center text-slate-400 py-10">No orders placed yet.</p> : 
+                    orders.map((o, i) => (
+                      <div key={i} className="p-3 border rounded mb-3 bg-slate-50 text-xs">
+                        <div className="flex justify-between font-bold mb-1"><span>{o.id}</span><span className="text-blue-600 uppercase">{o.status}</span></div>
+                        <p>Service: {o.type} | Cost: ₹{o.cost}</p>
+                      </div>
+                    ))
+                  }
                 </div>
               )}
-              
-              {/* (Keeping Report/Chat simple for brevity) */}
-              {activeTab === 'report' && <div className="text-center p-10">Reports for {userDB?.company} are "Work Under Process".</div>}
-              {activeTab === 'chat' && <div className="text-center p-10 text-emerald-600">AI Assistant Online for {userDB?.company}.</div>}
+
+              {activeTab === 'wipe' && (
+                <div>
+                  <h2 className="text-xl font-bold mb-4">Digital Wipe</h2>
+                  <input type="number" className="w-full p-2 border rounded mb-4" placeholder="Volume (GB)" onChange={(e) => setGbAmount(e.target.value)} />
+                  <p className="text-lg font-bold text-emerald-700 mb-4">Charge: ₹{gbAmount * 1}</p>
+                  <Button className="w-full bg-emerald-600" onClick={() => generateOrder('Digital Wipe')}>Initiate Erasure</Button>
+                </div>
+              )}
+
+              {activeTab === 'report' && (
+                <div className="text-center py-10">
+                  <h2 className="text-xl font-bold mb-2">Audit Reports</h2>
+                  <p className="text-slate-500 text-sm">Reports for {userDB?.company} are currently <strong>Work Under Process</strong>.</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -143,57 +185,49 @@ const Dashboard = ({ userDB }) => {
   );
 };
 
-// --- UPDATED SIGNUP (To get Company/Address) ---
+// --- AUTH PAGES ---
 const SignupPage = ({ setUserDB }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [company, setCompany] = useState('');
-  const [address, setAddress] = useState('');
-  const navigate = useNavigate();
-
-  const handleSignup = () => {
-    if(!company || !address) { alert("Please enter Company details"); return; }
-    setUserDB({ email, password, company, address });
-    alert("Corporate Account Created!");
-    navigate('/login');
+  const [f, setF] = useState({ e: '', p: '', c: '', a: '' });
+  const n = useNavigate();
+  const h = () => {
+    if(!f.c || !f.a) return alert("Enter Company Info");
+    setUserDB({ email: f.e, password: f.p, company: f.c, address: f.a });
+    n('/login');
   };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-4">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Corporate Registration</h2>
-        <input className="w-full p-3 mb-3 border rounded" placeholder="Company Name" onChange={(e)=>setCompany(e.target.value)} />
-        <input className="w-full p-3 mb-3 border rounded" placeholder="Company Address" onChange={(e)=>setAddress(e.target.value)} />
-        <input className="w-full p-3 mb-3 border rounded" placeholder="Gmail" onChange={(e)=>setEmail(e.target.value)} />
-        <input className="w-full p-3 mb-6 border rounded" type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} />
-        <Button className="w-full bg-emerald-600" onClick={handleSignup}>Create Account</Button>
+    <div className="flex items-center justify-center min-h-screen bg-slate-100 p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6">Corporate Signup</h2>
+        <input className="w-full p-3 mb-3 border rounded" placeholder="Company Name" onChange={e=>setF({...f, c:e.target.value})} />
+        <input className="w-full p-3 mb-3 border rounded" placeholder="Full Address" onChange={e=>setF({...f, a:e.target.value})} />
+        <input className="w-full p-3 mb-3 border rounded" placeholder="Gmail" onChange={e=>setF({...f, e:e.target.value})} />
+        <input className="w-full p-3 mb-6 border rounded" type="password" placeholder="Password" onChange={e=>setF({...f, p:e.target.value})} />
+        <Button className="w-full bg-emerald-600" onClick={h}>Create Account</Button>
       </div>
     </div>
   );
 };
 
-// --- LOGIN PAGE ---
 const LoginPage = ({ userDB }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    if (userDB && userDB.email === email && userDB.password === password) navigate('/dashboard');
-    else alert("Invalid credentials!");
+  const [e, setE] = useState('');
+  const [p, setP] = useState('');
+  const n = useNavigate();
+  const h = () => {
+    if (userDB && userDB.email === e && userDB.password === p) n('/dashboard');
+    else alert("Login Failed");
   };
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-slate-50 p-4">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center">Client Login</h2>
-        <input className="w-full p-3 mb-4 border rounded" type="email" placeholder="Gmail" onChange={(e) => setEmail(e.target.value)} />
-        <input className="w-full p-3 mb-6 border rounded" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-        <Button className="w-full bg-emerald-600" onClick={handleLogin}>Login</Button>
+    <div className="flex items-center justify-center h-screen bg-slate-100 p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <input className="w-full p-3 mb-3 border rounded" placeholder="Gmail" onChange={v=>setE(v.target.value)} />
+        <input className="w-full p-3 mb-6 border rounded" type="password" placeholder="Password" onChange={v=>setP(v.target.value)} />
+        <Button className="w-full bg-emerald-600" onClick={h}>Login</Button>
       </div>
     </div>
   );
 };
 
-// --- MAIN APP ---
 function App() {
   const [userDB, setUserDB] = useState(null);
   return (
