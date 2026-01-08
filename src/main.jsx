@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './app'; // Changed to lowercase 'a' to match your filename 'app.jsx'
+import App from './App'; // Changed to lowercase 'a' to match your filename 'app.jsx'
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
